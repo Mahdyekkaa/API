@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_integration_order_list" model="ir.ui.view">
+        <field name="name">integration.order.list</field>
+        <field name="model">integration.order</field>
+        <field name="arch" type="xml">
+            <list string="Integration Orders">
+                <field name="oid"/>
+                <field name="company_name"/>
+                <field name="consignee_name"/>
+                <field name="consignee_phone"/>
+                <field name="governorate"/>
+                <field name="courier"/>
+                <field name="order_type"/>
+                <field name="order_status"/>
+                <field name="batch_status"/>
+                <field name="batch_number"/>
+                <field name="settlement_amount"/>
+                <field name="cod_collected"/>
+                <field name="date_delivered"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_integration_order_form" model="ir.ui.view">
+        <field name="name">integration.order.form</field>
+        <field name="model">integration.order</field>
+        <field name="arch" type="xml">
+            <form string="Integration Order">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="oid"/>
+                        <h1>
+                            <field name="oid" placeholder="OID"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Customer">
+                            <field name="company_name"/>
+                            <field name="consignee_name"/>
+                            <field name="consignee_phone"/>
+                            <field name="governorate"/>
+                        </group>
+                        <group string="Courier &amp; Status">
+                            <field name="courier"/>
+                            <field name="order_type"/>
+                            <field name="order_status"/>
+                            <field name="batch_status"/>
+                            <field name="batch_number"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Financials">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="shipping_fees"/>
+                            <field name="settlement_amount"/>
+                            <field name="cod_collected"/>
+                            <field name="courier_expense"/>
+                        </group>
+                        <group string="Status Dates">
+                            <field name="date_created"/>
+                            <field name="date_picked_up"/>
+                            <field name="date_delivered"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Order Lines" name="order_lines">
+                            <field name="line_ids" nolabel="1">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="product_name"/>
+                                    <field name="quantity"/>
+                                    <field name="returned_quantity"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_integration_order_search" model="ir.ui.view">
+        <field name="name">integration.order.search</field>
+        <field name="model">integration.order</field>
+        <field name="arch" type="xml">
+            <search string="Integration Orders">
+                <field name="oid"/>
+                <field name="consignee_name"/>
+                <field name="consignee_phone"/>
+                <field name="company_name"/>
+                <field name="courier"/>
+                <field name="order_status"/>
+                <field name="batch_number"/>
+                <filter string="Delivered" name="delivered"
+                        domain="[('order_status', 'ilike', 'delivered')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Courier" name="group_courier" context="{'group_by': 'courier'}"/>
+                    <filter string="Order Status" name="group_status" context="{'group_by': 'order_status'}"/>
+                    <filter string="Batch" name="group_batch" context="{'group_by': 'batch_number'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_integration_order" model="ir.actions.act_window">
+        <field name="name">Integration Orders</field>
+        <field name="res_model">integration.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_integration_order_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No integration orders yet
+            </p>
+            <p>
+                Orders received from the inbound Order Details API appear here.
+            </p>
+        </field>
+    </record>
+</odoo>

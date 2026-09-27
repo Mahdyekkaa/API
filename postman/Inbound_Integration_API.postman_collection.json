@@ -1,0 +1,266 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-inbound-integration",
+    "name": "Odoo Inbound Integration API",
+    "description": "Postman collection for the Inbound Integration API endpoints.\n\n**Endpoints (same for Demo Data and Real Data folders):**\n- `POST {{base_url}}/api/integration/order-details`\n- `POST {{base_url}}/api/integration/batch-closing`\n\n**Auth:** Set `auth_token` to the value configured in Odoo under Inbound Integration → Configuration → Settings. Sent as `Authorization: Bearer {{auth_token}}` (API-Key / X-API-Key also supported by the server).\n\n**Success response:**\n```json\n{\n  \"success\": true,\n  \"external_id\": \"229681\",\n  \"odoo_record_id\": 12345,\n  \"action\": \"created\"\n}\n```\n`action` is `created` (HTTP 201) or `updated` (HTTP 200).\n\n**Required fields:** `oid` (order-details), `batch_id` (batch-closing).\nProducts are matched by name / default_code on standard `product.product`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8069",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "YOUR_API_AUTH_TOKEN",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Demo Data",
+      "description": "Realistic demo/test payloads aligned with the module demo data and API contract. Safe for local testing. Product names must exist in Odoo (e.g. demo products White Knitted Crewneck / Black Classic Tee).",
+      "item": [
+        {
+          "name": "Order Details — DEMO OID 900001",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oid\": 900001,\n  \"company_name\": \"DEMO Bare & Blanks\",\n  \"consignee_name\": \"DEMO Hamza Eid\",\n  \"consignee_phone\": \"01061407091\",\n  \"governorate\": \"Cairo\",\n  \"products\": [\n    {\n      \"product_name\": \"White Knitted Crewneck\",\n      \"quantity\": 1,\n      \"returned_quantity\": 0\n    }\n  ],\n  \"shipping_fees\": 87.6,\n  \"settlement_amount\": -87.6,\n  \"cod_collected\": 0,\n  \"courier\": \"Bosta\",\n  \"order_type\": \"Normal\",\n  \"order_status\": \"delivered\",\n  \"batch_status\": \"finished\",\n  \"batch_number\": \"94\",\n  \"courier_expense\": 0,\n  \"status_dates\": {\n    \"created\": \"2026-09-06T11:50:00\",\n    \"picked_up\": \"2026-09-06T11:50:00\",\n    \"delivered\": \"2026-09-09T16:04:00\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/order-details",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "order-details"]
+            },
+            "description": "DEMO Order Details create/update by external `oid`.\n\nUses DEMO-prefixed customer fields and OID `900001` so it is clearly identifiable as test data.\n\nRequires product `White Knitted Crewneck` to exist in Odoo."
+          },
+          "response": [
+            {
+              "name": "Success — created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"oid\": 900001,\n  \"company_name\": \"DEMO Bare & Blanks\",\n  \"consignee_name\": \"DEMO Hamza Eid\",\n  \"products\": []\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/integration/order-details",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "integration", "order-details"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"external_id\": \"900001\",\n  \"odoo_record_id\": 1,\n  \"action\": \"created\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Order Details — DEMO OID 900002 (multi-line)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oid\": 900002,\n  \"company_name\": \"DEMO Bare & Blanks\",\n  \"consignee_name\": \"DEMO Sara Hassan\",\n  \"consignee_phone\": \"01012345678\",\n  \"governorate\": \"Giza\",\n  \"products\": [\n    {\n      \"product_name\": \"White Knitted Crewneck\",\n      \"quantity\": 1,\n      \"returned_quantity\": 0\n    },\n    {\n      \"product_name\": \"Black Classic Tee\",\n      \"quantity\": 2,\n      \"returned_quantity\": 1\n    }\n  ],\n  \"shipping_fees\": 65.0,\n  \"settlement_amount\": 415.0,\n  \"cod_collected\": 480.0,\n  \"courier\": \"Bosta\",\n  \"order_type\": \"Normal\",\n  \"order_status\": \"delivered\",\n  \"batch_status\": \"finished\",\n  \"batch_number\": \"94\",\n  \"courier_expense\": 0,\n  \"status_dates\": {\n    \"created\": \"2026-09-07T09:15:00\",\n    \"picked_up\": \"2026-09-07T14:20:00\",\n    \"delivered\": \"2026-09-10T12:30:00\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/order-details",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "order-details"]
+            },
+            "description": "DEMO multi-line Order Details. OID `900002`. Products must exist in Odoo."
+          },
+          "response": []
+        },
+        {
+          "name": "Batch Closing — DEMO batch_id 9001",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batch_id\": 9001,\n  \"courier_name\": \"DEMO Bosta\",\n  \"courier_batch_number\": \"94\",\n  \"status\": \"finished\",\n  \"start_date\": \"2026-09-14T10:55:18\",\n  \"end_date\": \"2026-09-15T07:20:49\",\n  \"ended_by\": \"DEMO User Name\",\n  \"order_summary\": {\n    \"total_orders\": 39,\n    \"delivered_collected\": 21,\n    \"to_be_reshipped\": 18,\n    \"amount_to_be_collected\": 11429.6\n  },\n  \"financial\": {\n    \"base_commission\": 910,\n    \"additional\": 0,\n    \"bonus\": 100,\n    \"net_due\": 10419.6,\n    \"total_received\": 10420\n  },\n  \"transactions\": [\n    {\n      \"amount\": 10420,\n      \"method\": \"Cash\",\n      \"image\": null\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/batch-closing",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "batch-closing"]
+            },
+            "description": "DEMO Batch Closing create/update by external `batch_id`.\n\nUses batch_id `9001` and DEMO-prefixed courier/user fields."
+          },
+          "response": [
+            {
+              "name": "Success — created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/api/integration/batch-closing",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "integration", "batch-closing"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"external_id\": \"9001\",\n  \"odoo_record_id\": 1,\n  \"action\": \"created\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Batch Closing — DEMO batch_id 9002 (multi-tx)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batch_id\": 9002,\n  \"courier_name\": \"DEMO Aramex\",\n  \"courier_batch_number\": \"A-210\",\n  \"status\": \"finished\",\n  \"start_date\": \"2026-09-16T08:00:00\",\n  \"end_date\": \"2026-09-16T18:45:00\",\n  \"ended_by\": \"DEMO Ops Supervisor\",\n  \"order_summary\": {\n    \"total_orders\": 12,\n    \"delivered_collected\": 10,\n    \"to_be_reshipped\": 2,\n    \"amount_to_be_collected\": 3200.0\n  },\n  \"financial\": {\n    \"base_commission\": 250,\n    \"additional\": 50,\n    \"bonus\": 0,\n    \"net_due\": 2900,\n    \"total_received\": 2900\n  },\n  \"transactions\": [\n    {\n      \"amount\": 1500,\n      \"method\": \"Cash\",\n      \"image\": null\n    },\n    {\n      \"amount\": 1400,\n      \"method\": \"Bank Transfer\",\n      \"image\": null\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/batch-closing",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "batch-closing"]
+            },
+            "description": "DEMO Batch Closing with multiple payment transactions. batch_id `9002`."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Real Data",
+      "description": "Same endpoints and field structure as Demo Data. Replace placeholder values with real business data before sending.",
+      "item": [
+        {
+          "name": "Order Details",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"oid\": 0,\n  \"company_name\": \"\",\n  \"consignee_name\": \"\",\n  \"consignee_phone\": \"\",\n  \"governorate\": \"\",\n  \"products\": [\n    {\n      \"product_name\": \"\",\n      \"quantity\": 1,\n      \"returned_quantity\": 0\n    }\n  ],\n  \"shipping_fees\": 0.0,\n  \"settlement_amount\": 0.0,\n  \"cod_collected\": 0.0,\n  \"courier\": \"\",\n  \"order_type\": \"\",\n  \"order_status\": \"\",\n  \"batch_status\": \"\",\n  \"batch_number\": \"\",\n  \"courier_expense\": 0.0,\n  \"status_dates\": {\n    \"created\": \"\",\n    \"picked_up\": \"\",\n    \"delivered\": \"\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/order-details",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "order-details"]
+            },
+            "description": "Production-ready Order Details request.\n\n**Required:** `oid`\n\n**Matching:** products matched by `product_name` against Odoo `product.product` name or default_code.\n\n**Upsert:** same `oid` updates the existing record (no duplicates).\n\nReplace empty / zero placeholders with real values. Dates use ISO-8601 (e.g. `2026-09-06T11:50:00`)."
+          },
+          "response": []
+        },
+        {
+          "name": "Batch Closing",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"batch_id\": 0,\n  \"courier_name\": \"\",\n  \"courier_batch_number\": \"\",\n  \"status\": \"\",\n  \"start_date\": \"\",\n  \"end_date\": \"\",\n  \"ended_by\": \"\",\n  \"order_summary\": {\n    \"total_orders\": 0,\n    \"delivered_collected\": 0,\n    \"to_be_reshipped\": 0,\n    \"amount_to_be_collected\": 0.0\n  },\n  \"financial\": {\n    \"base_commission\": 0.0,\n    \"additional\": 0.0,\n    \"bonus\": 0.0,\n    \"net_due\": 0.0,\n    \"total_received\": 0.0\n  },\n  \"transactions\": [\n    {\n      \"amount\": 0.0,\n      \"method\": \"\",\n      \"image\": null\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/batch-closing",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "batch-closing"]
+            },
+            "description": "Production-ready Batch Closing request.\n\n**Required:** `batch_id`\n\n**Upsert:** same `batch_id` updates the existing record (no duplicates).\n\n`image` accepts `null` or a base64 string (optional data-URI prefix).\n\nReplace empty / zero placeholders with real values. Dates use ISO-8601."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

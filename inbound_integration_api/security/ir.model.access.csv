@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_integration_order_user,integration.order user,model_integration_order,base.group_user,1,1,1,0
+access_integration_order_manager,integration.order manager,model_integration_order,base.group_system,1,1,1,1
+access_integration_order_line_user,integration.order.line user,model_integration_order_line,base.group_user,1,1,1,0
+access_integration_order_line_manager,integration.order.line manager,model_integration_order_line,base.group_system,1,1,1,1
+access_integration_batch_closing_user,integration.batch.closing user,model_integration_batch_closing,base.group_user,1,1,1,0
+access_integration_batch_closing_manager,integration.batch.closing manager,model_integration_batch_closing,base.group_system,1,1,1,1
+access_integration_batch_transaction_user,integration.batch.transaction user,model_integration_batch_transaction,base.group_user,1,1,1,0
+access_integration_batch_transaction_manager,integration.batch.transaction manager,model_integration_batch_transaction,base.group_system,1,1,1,1

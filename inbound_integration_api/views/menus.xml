@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_inbound_integration_api_root"
+              name="Inbound Integration"
+              sequence="45"
+              web_icon="inbound_integration_api,static/description/icon.png"
+              groups="base.group_user"/>
+
+    <menuitem id="menu_integration_order"
+              name="Orders"
+              parent="menu_inbound_integration_api_root"
+              action="action_integration_order"
+              sequence="10"/>
+
+    <menuitem id="menu_integration_batch_closing"
+              name="Batch Closings"
+              parent="menu_inbound_integration_api_root"
+              action="action_integration_batch_closing"
+              sequence="20"/>
+
+    <menuitem id="menu_inbound_integration_configuration"
+              name="Configuration"
+              parent="menu_inbound_integration_api_root"
+              sequence="90"
+              groups="base.group_system"/>
+
+    <menuitem id="menu_inbound_integration_settings"
+              name="Settings"
+              parent="menu_inbound_integration_configuration"
+              action="action_inbound_integration_config_settings"
+              sequence="10"
+              groups="base.group_system"/>
+</odoo>

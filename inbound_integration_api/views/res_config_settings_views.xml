@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="inbound_integration_api_res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.inbound.integration.api</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app string="Inbound Integration API" name="inbound_integration_api" groups="base.group_system">
+                    <block title="Authentication" name="inbound_integration_api_auth_settings">
+                        <setting id="inbound_integration_api_enabled"
+                                 string="Enable API"
+                                 help="Allow external systems to post Order Details and Batch Closing payloads.">
+                            <field name="inbound_integration_api_enabled"/>
+                        </setting>
+                        <setting id="inbound_integration_api_require_auth"
+                                 string="Require Authentication"
+                                 help="Reject requests that do not present a valid Bearer token or API key."
+                                 invisible="not inbound_integration_api_enabled">
+                            <field name="inbound_integration_api_require_auth"/>
+                        </setting>
+                        <setting id="inbound_integration_api_auth_token"
+                                 string="API Auth Token"
+                                 help="Configure the shared secret used by the external system. Send as Authorization: Bearer &lt;token&gt; or API-Key / X-API-Key header."
+                                 invisible="not inbound_integration_api_enabled">
+                            <field name="inbound_integration_api_auth_token" password="True"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_inbound_integration_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'inbound_integration_api'}</field>
+    </record>
+</odoo>
