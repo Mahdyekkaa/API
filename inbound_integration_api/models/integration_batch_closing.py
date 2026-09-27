@@ -54,6 +54,12 @@ class IntegrationBatchClosing(models.Model):
         string="Transactions",
         copy=True,
     )
+    order_ids = fields.One2many(
+        "integration.order",
+        "batch_closing_id",
+        string="Orders",
+    )
+    order_count = fields.Integer(compute="_compute_order_count")
 
     _sql_constraints = [
         (
@@ -74,6 +80,54 @@ class IntegrationBatchClosing(models.Model):
             if batch.courier_name:
                 parts.append(batch.courier_name)
             batch.display_name = " - ".join(parts) if parts else _("New Batch Closing")
+
+    @api.depends("order_ids")
+    def _compute_order_count(self):
+        for batch in self:
+            batch.order_count = len(batch.order_ids)
+
+    def action_view_orders(self):
+        self.ensure_one()
+        action = self.env["ir.actions.act_window"]._for_xml_id(
+            "inbound_integration_api.action_integration_order"
+        )
+        action["domain"] = [("batch_closing_id", "=", self.id)]
+        action["context"] = {"default_batch_closing_id": self.id}
+        return action
+
+    @api.model
+    def _find_by_courier_batch(self, batch_number, courier):
+        """Return the batch closing matching a courier batch number (and courier)."""
+        batch_number = (batch_number or "").strip()
+        if not batch_number:
+            return self.browse()
+        domain = [("courier_batch_number", "=", batch_number)]
+        courier = (courier or "").strip()
+        if courier:
+            domain += [
+                "|",
+                ("courier_name", "=ilike", courier),
+                ("courier_name", "in", (False, "")),
+            ]
+        return self.sudo().search(domain, limit=1)
+
+    def _link_matching_orders(self):
+        """Attach unlinked orders whose batch number and courier match this batch."""
+        Order = self.env["integration.order"].sudo()
+        for batch in self:
+            if not batch.courier_batch_number:
+                continue
+            domain = [
+                ("batch_closing_id", "=", False),
+                ("batch_number", "=", batch.courier_batch_number),
+            ]
+            if batch.courier_name:
+                domain += [
+                    "|",
+                    ("courier", "=ilike", batch.courier_name),
+                    ("courier", "in", (False, "")),
+                ]
+            Order.search(domain).write({"batch_closing_id": batch.id})
 
     @api.model
     def _parse_datetime(self, value):
@@ -162,6 +216,9 @@ class IntegrationBatchClosing(models.Model):
         batch = self.sudo().search([("batch_id", "=", batch_id)], limit=1)
         if batch:
             batch.write(vals)
-            return batch, "updated"
-        batch = self.sudo().create(vals)
-        return batch, "created"
+            action = "updated"
+        else:
+            batch = self.sudo().create(vals)
+            action = "created"
+        batch._link_matching_orders()
+        return batch, action

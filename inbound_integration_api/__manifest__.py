@@ -24,6 +24,7 @@ Inbound Integration > Configuration > Settings.
         "security/ir.model.access.csv",
         "views/integration_order_views.xml",
         "views/integration_batch_closing_views.xml",
+        "views/integration_fee_request_views.xml",
         "views/res_config_settings_views.xml",
         "views/menus.xml",
     ],

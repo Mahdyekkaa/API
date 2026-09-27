@@ -18,6 +18,12 @@
               action="action_integration_batch_closing"
               sequence="20"/>
 
+    <menuitem id="menu_integration_fee_request"
+              name="Fee Requests"
+              parent="menu_inbound_integration_api_root"
+              action="action_integration_fee_request"
+              sequence="30"/>
+
     <menuitem id="menu_inbound_integration_configuration"
               name="Configuration"
               parent="menu_inbound_integration_api_root"

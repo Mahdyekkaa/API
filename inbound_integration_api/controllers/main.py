@@ -203,3 +203,42 @@ class InboundIntegrationController(http.Controller):
             )
 
         return self._success_response(batch, action, payload.get("batch_id"))
+
+    @http.route(
+        "/api/integration/fee-request",
+        type="http",
+        auth="public",
+        methods=["POST"],
+        csrf=False,
+        save_session=False,
+    )
+    def fee_request(self, **kwargs):
+        auth_error = self._authenticate()
+        if auth_error:
+            return auth_error
+
+        payload, parse_error = self._parse_json_body()
+        if parse_error:
+            return parse_error
+
+        if payload.get("request_id") in (None, ""):
+            return self._error_response(_("request_id is required."), status=400)
+
+        try:
+            fee_request, action = (
+                request.env["integration.fee.request"]
+                .sudo()
+                .upsert_from_payload(payload)
+            )
+        except LookupError as err:
+            return self._error_response(str(err), status=404)
+        except ValueError as err:
+            return self._error_response(str(err), status=400)
+        except Exception:
+            _logger.exception("fee-request inbound failed")
+            return self._error_response(
+                _("Unexpected server error."),
+                status=500,
+            )
+
+        return self._success_response(fee_request, action, payload.get("request_id"))

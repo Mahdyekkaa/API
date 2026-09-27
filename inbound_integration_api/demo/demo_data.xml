@@ -15,11 +15,21 @@
         <field name="list_price">180.0</field>
     </record>
 
+    <record id="demo_partner_hamza_eid" model="res.partner">
+        <field name="name">Hamza Eid</field>
+        <field name="phone">01061407091</field>
+    </record>
+
+    <record id="demo_partner_sara_hassan" model="res.partner">
+        <field name="name">Sara Hassan</field>
+        <field name="phone">01012345678</field>
+    </record>
+
     <!-- Order Details demo — mirrors the inbound payload sample -->
     <record id="demo_integration_order_229681" model="integration.order">
         <field name="oid">229681</field>
         <field name="company_name">Bare &amp; Blanks</field>
-        <field name="consignee_name">Hamza Eid</field>
+        <field name="consignee_id" ref="demo_partner_hamza_eid"/>
         <field name="consignee_phone">01061407091</field>
         <field name="governorate">Cairo</field>
         <field name="shipping_fees">87.60</field>
@@ -47,7 +57,7 @@
     <record id="demo_integration_order_229682" model="integration.order">
         <field name="oid">229682</field>
         <field name="company_name">Bare &amp; Blanks</field>
-        <field name="consignee_name">Sara Hassan</field>
+        <field name="consignee_id" ref="demo_partner_sara_hassan"/>
         <field name="consignee_phone">01012345678</field>
         <field name="governorate">Giza</field>
         <field name="shipping_fees">65.00</field>
@@ -80,6 +90,14 @@
         <field name="returned_quantity">1.0</field>
     </record>
 
+    <record id="demo_integration_fee_request_1" model="integration.fee.request">
+        <field name="request_id">FR-0001</field>
+        <field name="state">requested</field>
+        <field name="requested_amount">327.4</field>
+        <field name="request_date">2026-09-15 10:00:00</field>
+        <field name="order_ids" eval="[(4, ref('demo_integration_order_229681')), (4, ref('demo_integration_order_229682'))]"/>
+    </record>
+
     <!-- Batch Closing demo — mirrors the inbound payload sample -->
     <record id="demo_integration_batch_closing_1" model="integration.batch.closing">
         <field name="batch_id">1</field>
@@ -98,6 +116,7 @@
         <field name="bonus">100.0</field>
         <field name="net_due">10419.60</field>
         <field name="total_received">10420.0</field>
+        <field name="order_ids" eval="[(4, ref('demo_integration_order_229681')), (4, ref('demo_integration_order_229682'))]"/>
     </record>
 
     <record id="demo_integration_batch_closing_1_tx_1" model="integration.batch.transaction">

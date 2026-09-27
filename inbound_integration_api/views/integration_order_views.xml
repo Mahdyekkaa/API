@@ -7,14 +7,19 @@
             <list string="Integration Orders">
                 <field name="oid"/>
                 <field name="company_name"/>
-                <field name="consignee_name"/>
+                <field name="consignee_id"/>
                 <field name="consignee_phone"/>
                 <field name="governorate"/>
                 <field name="courier"/>
                 <field name="order_type"/>
-                <field name="order_status"/>
+                <field name="order_status" widget="badge"
+                       decoration-info="order_status == 'delivered'"
+                       decoration-warning="order_status == 'returned'"
+                       decoration-success="order_status == 'paid'"/>
                 <field name="batch_status"/>
                 <field name="batch_number"/>
+                <field name="batch_closing_id" optional="show"/>
+                <field name="fee_request_id" optional="show"/>
                 <field name="settlement_amount"/>
                 <field name="cod_collected"/>
                 <field name="date_delivered"/>
@@ -27,6 +32,9 @@
         <field name="model">integration.order</field>
         <field name="arch" type="xml">
             <form string="Integration Order">
+                <header>
+                    <field name="order_status" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="oid"/>
@@ -37,16 +45,18 @@
                     <group>
                         <group string="Customer">
                             <field name="company_name"/>
-                            <field name="consignee_name"/>
+                            <field name="consignee_id"/>
                             <field name="consignee_phone"/>
                             <field name="governorate"/>
                         </group>
                         <group string="Courier &amp; Status">
                             <field name="courier"/>
                             <field name="order_type"/>
-                            <field name="order_status"/>
                             <field name="batch_status"/>
                             <field name="batch_number"/>
+                            <field name="batch_closing_id"/>
+                            <field name="fee_request_id"/>
+                            <field name="delivery_outcome"/>
                         </group>
                     </group>
                     <group>
@@ -56,6 +66,9 @@
                             <field name="settlement_amount"/>
                             <field name="cod_collected"/>
                             <field name="courier_expense"/>
+                            <field name="num_products"/>
+                            <field name="subtotal"/>
+                            <field name="total"/>
                         </group>
                         <group string="Status Dates">
                             <field name="date_created"/>
@@ -88,18 +101,24 @@
         <field name="arch" type="xml">
             <search string="Integration Orders">
                 <field name="oid"/>
-                <field name="consignee_name"/>
+                <field name="consignee_id"/>
                 <field name="consignee_phone"/>
                 <field name="company_name"/>
                 <field name="courier"/>
                 <field name="order_status"/>
                 <field name="batch_number"/>
+                <field name="batch_closing_id"/>
                 <filter string="Delivered" name="delivered"
-                        domain="[('order_status', 'ilike', 'delivered')]"/>
+                        domain="[('order_status', '=', 'delivered')]"/>
+                <filter string="Returned" name="returned"
+                        domain="[('order_status', '=', 'returned')]"/>
+                <filter string="Paid" name="paid"
+                        domain="[('order_status', '=', 'paid')]"/>
                 <group expand="0" string="Group By">
                     <filter string="Courier" name="group_courier" context="{'group_by': 'courier'}"/>
-                    <filter string="Order Status" name="group_status" context="{'group_by': 'order_status'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'order_status'}"/>
                     <filter string="Batch" name="group_batch" context="{'group_by': 'batch_number'}"/>
+                    <filter string="Batch Closing" name="group_batch_closing" context="{'group_by': 'batch_closing_id'}"/>
                 </group>
             </search>
         </field>

@@ -25,6 +25,12 @@
         <field name="arch" type="xml">
             <form string="Batch Closing">
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_orders" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="order_count" widget="statinfo" string="Orders"/>
+                        </button>
+                    </div>
                     <div class="oe_title">
                         <label for="batch_id"/>
                         <h1>
@@ -61,6 +67,23 @@
                         </group>
                     </group>
                     <notebook>
+                        <page string="Orders" name="orders">
+                            <field name="order_ids" nolabel="1">
+                                <list>
+                                    <field name="oid"/>
+                                    <field name="consignee_id"/>
+                                    <field name="consignee_phone"/>
+                                    <field name="governorate"/>
+                                    <field name="order_status" widget="badge"
+                                           decoration-info="order_status == 'delivered'"
+                                           decoration-warning="order_status == 'returned'"
+                                           decoration-success="order_status == 'paid'"/>
+                                    <field name="cod_collected" sum="Total"/>
+                                    <field name="settlement_amount" sum="Total"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
                         <page string="Transactions" name="transactions">
                             <field name="transaction_ids" nolabel="1">
                                 <list editable="bottom">

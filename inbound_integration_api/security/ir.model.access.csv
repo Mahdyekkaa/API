@@ -7,3 +7,5 @@ access_integration_batch_closing_user,integration.batch.closing user,model_integ
 access_integration_batch_closing_manager,integration.batch.closing manager,model_integration_batch_closing,base.group_system,1,1,1,1
 access_integration_batch_transaction_user,integration.batch.transaction user,model_integration_batch_transaction,base.group_user,1,1,1,0
 access_integration_batch_transaction_manager,integration.batch.transaction manager,model_integration_batch_transaction,base.group_system,1,1,1,1
+access_integration_fee_request_user,integration.fee.request user,model_integration_fee_request,base.group_user,1,1,1,0
+access_integration_fee_request_manager,integration.fee.request manager,model_integration_fee_request,base.group_system,1,1,1,1
