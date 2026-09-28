@@ -9,3 +9,5 @@ access_integration_batch_transaction_user,integration.batch.transaction user,mod
 access_integration_batch_transaction_manager,integration.batch.transaction manager,model_integration_batch_transaction,base.group_system,1,1,1,1
 access_integration_fee_request_user,integration.fee.request user,model_integration_fee_request,base.group_user,1,1,1,0
 access_integration_fee_request_manager,integration.fee.request manager,model_integration_fee_request,base.group_system,1,1,1,1
+access_integration_company_user,integration.company user,model_integration_company,base.group_user,1,1,1,0
+access_integration_company_manager,integration.company manager,model_integration_company,base.group_system,1,1,1,1

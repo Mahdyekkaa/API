@@ -17,7 +17,12 @@ class IntegrationOrder(models.Model):
         copy=False,
         help="External order identifier. Unique; repeated requests update this record.",
     )
-    company_name = fields.Char(string="Company Name")
+    integration_company_id = fields.Many2one(
+        "integration.company",
+        string="Company Name",
+        index=True,
+        ondelete="restrict",
+    )
     consignee_id = fields.Many2one(
         "res.partner",
         string="Consignee Name",
@@ -228,6 +233,14 @@ class IntegrationOrder(models.Model):
         return Partner.create({"name": name, "phone": phone or False})
 
     @api.model
+    def _find_or_create_by_oid(self, oid):
+        """Return the order matching oid, creating a delivered one if missing."""
+        order = self.sudo().search([("oid", "=", oid)], limit=1)
+        if order:
+            return order
+        return self.sudo().create({"oid": oid, "order_status": "delivered"})
+
+    @api.model
     def upsert_from_payload(self, payload):
         """
         Create or update an integration order from an inbound Order Details payload.
@@ -268,7 +281,9 @@ class IntegrationOrder(models.Model):
 
         vals = {
             "oid": oid,
-            "company_name": payload.get("company_name"),
+            "integration_company_id": self.env["integration.company"]
+            ._find_or_create_by_name(payload.get("company_name"))
+            .id,
             "consignee_id": self._find_or_create_consignee(
                 payload.get("consignee_name"), payload.get("consignee_phone")
             ).id,

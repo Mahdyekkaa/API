@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_integration_company_list" model="ir.ui.view">
+        <field name="name">integration.company.list</field>
+        <field name="model">integration.company</field>
+        <field name="arch" type="xml">
+            <list string="Companies">
+                <field name="name"/>
+                <field name="order_count" string="Orders"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_integration_company_form" model="ir.ui.view">
+        <field name="name">integration.company.form</field>
+        <field name="model">integration.company</field>
+        <field name="arch" type="xml">
+            <form string="Company">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_orders" type="object"
+                                class="oe_stat_button" icon="fa-truck">
+                            <field name="order_count" widget="statinfo" string="Orders"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Company Name"/>
+                        </h1>
+                    </div>
+                    <field name="active" invisible="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_integration_company_search" model="ir.ui.view">
+        <field name="name">integration.company.search</field>
+        <field name="model">integration.company</field>
+        <field name="arch" type="xml">
+            <search string="Companies">
+                <field name="name"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_integration_company" model="ir.actions.act_window">
+        <field name="name">Companies</field>
+        <field name="res_model">integration.company</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_integration_company_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No companies yet
+            </p>
+            <p>
+                Companies are created automatically from the company name sent by the Order Details API.
+            </p>
+        </field>
+    </record>
+</odoo>

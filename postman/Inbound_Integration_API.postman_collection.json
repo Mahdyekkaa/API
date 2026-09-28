@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1b2c3d4-e5f6-7890-abcd-inbound-integration",
     "name": "Odoo Inbound Integration API",
-    "description": "Postman collection for the Inbound Integration API endpoints.\n\n**Endpoints (same for Demo Data and Real Data folders):**\n- `POST {{base_url}}/api/integration/order-details`\n- `POST {{base_url}}/api/integration/batch-closing`\n\n**Auth:** Set `auth_token` to the value configured in Odoo under Inbound Integration → Configuration → Settings. Sent as `Authorization: Bearer {{auth_token}}` (API-Key / X-API-Key also supported by the server).\n\n**Success response:**\n```json\n{\n  \"success\": true,\n  \"external_id\": \"229681\",\n  \"odoo_record_id\": 12345,\n  \"action\": \"created\"\n}\n```\n`action` is `created` (HTTP 201) or `updated` (HTTP 200).\n\n**Required fields:** `oid` (order-details), `batch_id` (batch-closing).\nProducts are matched by name / default_code on standard `product.product`.",
+    "description": "Postman collection for the Inbound Integration API endpoints.\n\n**Endpoints (same for Demo Data and Real Data folders):**\n- `POST {{base_url}}/api/integration/order-details`\n- `POST {{base_url}}/api/integration/batch-closing`\n- `POST {{base_url}}/api/integration/fee-request`\n\n**Auth:** Set `auth_token` to the value configured in Odoo under Inbound Integration → Configuration → Settings. Sent as `Authorization: Bearer {{auth_token}}` (API-Key / X-API-Key also supported by the server).\n\n**Success response:**\n```json\n{\n  \"success\": true,\n  \"external_id\": \"229681\",\n  \"odoo_record_id\": 12345,\n  \"action\": \"created\"\n}\n```\n`action` is `created` (HTTP 201) or `updated` (HTTP 200).\n\n**Required fields:** `oid` (order-details), `batch_id` (batch-closing), `request_id` + `oids` (fee-request).\nProducts are matched by name / default_code on standard `product.product`.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
@@ -199,6 +199,96 @@
             "description": "DEMO Batch Closing with multiple payment transactions. batch_id `9002`."
           },
           "response": []
+        },
+        {
+          "name": "Fee Request — DEMO request_id DEMO-FR-9001",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"request_id\": \"DEMO-FR-9001\",\n  \"oids\": [900001, 900002],\n  \"requested_amount\": 327.4,\n  \"request_date\": \"2026-09-20T10:00:00\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/fee-request",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "fee-request"]
+            },
+            "description": "DEMO Fee Request create/update by external `request_id`.\n\nLinks DEMO orders `900001` and `900002`. Missing orders are created automatically with status `delivered`. Orders must be delivered or returned and must not belong to another fee request."
+          },
+          "response": [
+            {
+              "name": "Success — created",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"request_id\": \"DEMO-FR-9001\",\n  \"oids\": [900001, 900002],\n  \"requested_amount\": 327.4\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/integration/fee-request",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "integration", "fee-request"]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": true,\n  \"external_id\": \"DEMO-FR-9001\",\n  \"odoo_record_id\": 1,\n  \"action\": \"created\"\n}"
+            },
+            {
+              "name": "Error — order already in another fee request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"request_id\": \"DEMO-FR-9002\",\n  \"oids\": [900001]\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/integration/fee-request",
+                  "host": ["{{base_url}}"],
+                  "path": ["api", "integration", "fee-request"]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"success\": false,\n  \"error\": \"Orders already belong to another fee request: 900001\"\n}"
+            }
+          ]
         }
       ]
     },
@@ -257,6 +347,33 @@
               "path": ["api", "integration", "batch-closing"]
             },
             "description": "Production-ready Batch Closing request.\n\n**Required:** `batch_id`\n\n**Upsert:** same `batch_id` updates the existing record (no duplicates).\n\n`image` accepts `null` or a base64 string (optional data-URI prefix).\n\nReplace empty / zero placeholders with real values. Dates use ISO-8601."
+          },
+          "response": []
+        },
+        {
+          "name": "Fee Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"request_id\": \"\",\n  \"oids\": [],\n  \"requested_amount\": 0.0,\n  \"request_date\": \"\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/integration/fee-request",
+              "host": ["{{base_url}}"],
+              "path": ["api", "integration", "fee-request"]
+            },
+            "description": "Production-ready Fee Request request.\n\n**Required:** `request_id`, `oids` (at least one order).\n\n**oids items:** either a plain OID (e.g. `900001`) or a full Order Details object (same body as `/order-details`). A plain OID that does not exist is created with status `delivered`; an object creates/updates the order with its full data.\n\n**Rules:** orders must be delivered or returned, must not belong to another fee request, and a paid fee request cannot be updated. If the request fails, no orders are created.\n\n**Upsert:** same `request_id` updates the existing record and replaces its orders. The fee request is set to `Requested`.\n\n`request_date` is optional (ISO-8601); defaults to now."
           },
           "response": []
         }

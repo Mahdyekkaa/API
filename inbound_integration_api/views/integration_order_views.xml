@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <list string="Integration Orders">
                 <field name="oid"/>
-                <field name="company_name"/>
+                <field name="integration_company_id"/>
                 <field name="consignee_id"/>
                 <field name="consignee_phone"/>
                 <field name="governorate"/>
@@ -44,7 +44,7 @@
                     </div>
                     <group>
                         <group string="Customer">
-                            <field name="company_name"/>
+                            <field name="integration_company_id"/>
                             <field name="consignee_id"/>
                             <field name="consignee_phone"/>
                             <field name="governorate"/>
@@ -103,7 +103,7 @@
                 <field name="oid"/>
                 <field name="consignee_id"/>
                 <field name="consignee_phone"/>
-                <field name="company_name"/>
+                <field name="integration_company_id"/>
                 <field name="courier"/>
                 <field name="order_status"/>
                 <field name="batch_number"/>
@@ -115,6 +115,7 @@
                 <filter string="Paid" name="paid"
                         domain="[('order_status', '=', 'paid')]"/>
                 <group expand="0" string="Group By">
+                    <filter string="Company" name="group_company" context="{'group_by': 'integration_company_id'}"/>
                     <filter string="Courier" name="group_courier" context="{'group_by': 'courier'}"/>
                     <filter string="Status" name="group_status" context="{'group_by': 'order_status'}"/>
                     <filter string="Batch" name="group_batch" context="{'group_by': 'batch_number'}"/>

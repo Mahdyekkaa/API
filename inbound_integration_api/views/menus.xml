@@ -30,6 +30,12 @@
               sequence="90"
               groups="base.group_system"/>
 
+    <menuitem id="menu_integration_company"
+              name="Companies"
+              parent="menu_inbound_integration_configuration"
+              action="action_integration_company"
+              sequence="5"/>
+
     <menuitem id="menu_inbound_integration_settings"
               name="Settings"
               parent="menu_inbound_integration_configuration"

@@ -173,21 +173,32 @@ class IntegrationFeeRequest(models.Model):
             raise ValueError(_("request_id is required."))
         request_id = str(request_id).strip()
 
-        oids = payload.get("oids") or []
-        if not isinstance(oids, list):
+        items = payload.get("oids") or []
+        if not isinstance(items, list):
             raise ValueError(_("oids must be a list."))
-        oids = [str(oid).strip() for oid in oids if oid not in (None, "")]
-        if not oids:
+        items = [item for item in items if item not in (None, "")]
+        if not items:
             raise ValueError(_("oids must contain at least one order."))
 
         fee_request = self.sudo().search([("request_id", "=", request_id)], limit=1)
         if fee_request.state == "paid":
             raise ValueError(_("Fee request %s is already paid.") % request_id)
 
-        orders = self.env["integration.order"].sudo().search([("oid", "in", oids)])
-        missing = sorted(set(oids) - set(orders.mapped("oid")))
-        if missing:
-            raise LookupError(_("Orders not found: %s") % ", ".join(missing))
+        # Savepoint: orders created below must not persist if validation fails,
+        # since the controller turns errors into responses instead of re-raising.
+        with self.env.cr.savepoint():
+            return self._upsert_fee_request(fee_request, request_id, items, payload)
+
+    @api.model
+    def _upsert_fee_request(self, fee_request, request_id, items, payload):
+        Order = self.env["integration.order"].sudo()
+        orders = Order.browse()
+        for item in items:
+            if isinstance(item, dict):
+                order, _action = Order.upsert_from_payload(item)
+            else:
+                order = Order._find_or_create_by_oid(str(item).strip())
+            orders |= order
 
         not_eligible = orders.filtered(lambda o: not o.delivery_outcome)
         if not_eligible:

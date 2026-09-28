@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Inbound Integration API",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Productivity",
     "summary": "Inbound Order Details and Batch Closing API for external courier integrations",
     "description": """
@@ -23,6 +23,7 @@ Inbound Integration > Configuration > Settings.
     "data": [
         "security/ir.model.access.csv",
         "views/integration_order_views.xml",
+        "views/integration_company_views.xml",
         "views/integration_batch_closing_views.xml",
         "views/integration_fee_request_views.xml",
         "views/res_config_settings_views.xml",

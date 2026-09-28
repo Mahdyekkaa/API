@@ -25,10 +25,14 @@
         <field name="phone">01012345678</field>
     </record>
 
+    <record id="demo_integration_company_bare_blanks" model="integration.company">
+        <field name="name">Bare &amp; Blanks</field>
+    </record>
+
     <!-- Order Details demo — mirrors the inbound payload sample -->
     <record id="demo_integration_order_229681" model="integration.order">
         <field name="oid">229681</field>
-        <field name="company_name">Bare &amp; Blanks</field>
+        <field name="integration_company_id" ref="demo_integration_company_bare_blanks"/>
         <field name="consignee_id" ref="demo_partner_hamza_eid"/>
         <field name="consignee_phone">01061407091</field>
         <field name="governorate">Cairo</field>
@@ -56,7 +60,7 @@
 
     <record id="demo_integration_order_229682" model="integration.order">
         <field name="oid">229682</field>
-        <field name="company_name">Bare &amp; Blanks</field>
+        <field name="integration_company_id" ref="demo_integration_company_bare_blanks"/>
         <field name="consignee_id" ref="demo_partner_sara_hassan"/>
         <field name="consignee_phone">01012345678</field>
         <field name="governorate">Giza</field>
